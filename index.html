@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>React Pillbox</title>
+    <link rel="stylesheet" href="css/pillbox.css"/>
+    <script type="text/javascript" src="js/lib/react-with-addons.js"></script>
+    <script type="text/javascript" src="js/lib/JSXTransformer.js"></script>
+</head>
+<body>
+    <div id="example"></div>
+    <script type="text/jsx" src="js/react-pillbox/pillbox.js"></script>
+    <script type="text/jsx">
+        /** @jsx React.DOM */
+        var pills = [
+            {
+                label: 'Lorem',
+                value: 'lorem'
+            },
+            {
+                label: 'Lorrem',
+                value: 'lorrem'
+            },
+            {
+                label: 'Lorrrem',
+                value: 'lorrrem'
+            },
+            {
+                label: 'Lorrreem',
+                value: 'lorrreem'
+            },
+            {
+                label: 'Lorrreeem',
+                value: 'lorrreeem'
+            },
+            {
+                label: 'Lorrrrem',
+                value: 'lorrrrem'
+            },
+            {
+                label: 'Ipsum',
+                value: 'ipsum'
+            },
+            {
+                label: 'Dolor',
+                value: 'dolor'
+            },
+            {
+                label: 'Doolor',
+                value: 'doolor'
+            },
+            {
+                label: 'Dooolor',
+                value: 'dooolor'
+            },
+            {
+                label: 'Sit',
+                value: 'sit'
+            },
+            {
+                label: 'Amet',
+                value: 'amet'
+            },
+            {
+                label: 'Consectetur',
+                value: 'consectetur'
+            },
+            {
+                label: 'Adipiscing',
+                value: 'adipiscing'
+            },
+            {
+                label: 'Elit',
+                value: 'elit'
+            },
+            {
+                label: 'Lorem Ipsum',
+                value: 'lorem-ipsum'
+            }
+        ];
+        React.renderComponent(
+            <PillBox pills={pills}/>,
+            document.getElementById('example')
+        );
+    </script>
+</body>
+</html>
