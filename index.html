@@ -18,9 +18,9 @@
                 value: 'lorem'
             },
             {
+                selected: true,
                 label: 'Lorrem',
-                value: 'lorrem',
-                selected: true
+                value: 'lorrem'
             },
             {
                 label: 'Lorrrem',
@@ -43,9 +43,9 @@
                 value: 'ipsum'
             },
             {
+                selected: true,
                 label: 'Dolor',
-                value: 'dolor',
-                selected: true
+                value: 'dolor'
             },
             {
                 label: 'Doolor',
@@ -60,9 +60,9 @@
                 value: 'sit'
             },
             {
+                selected: true,
                 label: 'Amet',
-                value: 'amet',
-                selected: true
+                value: 'amet'
             },
             {
                 label: 'Consectetur',
@@ -82,7 +82,7 @@
             }
         ];
         React.renderComponent(
-            <PillBox pills={pills}/>,
+            <PillBox pills={pills} autoFocus={true}/>,
             document.getElementById('example')
         );
     </script>

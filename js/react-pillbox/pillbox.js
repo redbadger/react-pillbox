@@ -14,7 +14,7 @@ var pillbox = {};
         suggestedPills: []
       };
     },
-    addPrescriptionItem: function(input) {
+    addPill: function(input) {
       var found = this.props.pills.filter(function(pill) {
         return pill.label.toLowerCase() == input.toLowerCase();
       });
@@ -91,8 +91,9 @@ var pillbox = {};
             {selectedPills}
             <Prescription
               items={this.state.suggestedPills}
+              autoFocus={this.props.autoFocus}
               onInput={this.updatePrescription}
-              onEnter={this.addPrescriptionItem}
+              onEnter={this.addPill}
               onEscape={this.clearPrescription}
               onBackspace={this.handleBackspace}
             />
@@ -166,8 +167,8 @@ var pillbox = {};
       this.clearLookup();
     },
     handleKeyDown: function(event) {
+      // BACKSPACE
       if(event.which === 8) {
-        // BACKSPACE
         if(this.refs.lookup.getDOMNode().value.length == 0) {
           this.props.onBackspace();
         }
@@ -178,25 +179,25 @@ var pillbox = {};
 
       this.props.onInput(input);
 
+      // ENTER
       if(event.which === 13) {
-        // ENTER
         this.postPrescription();
         this.setState({highlightedIndex: 0});
       }
 
+      // ESC
       else if(event.which === 27) {
-        // ESC
         this.props.onEscape();
         this.clearLookup();
       }
 
+      // UP
       else if(event.which === 38) {
-        // UP
         this.setState({highlightedIndex: Math.max(0, this.state.highlightedIndex - 1)});
       }
 
+      // DOWN
       else if(event.which === 40) {
-        // DOWN
         this.setState({highlightedIndex: Math.min(this.props.items.length - 1, this.state.highlightedIndex + 1)});
       }
     },
@@ -217,6 +218,7 @@ var pillbox = {};
           <input
             ref='lookup'
             type='text'
+            autoFocus={this.props.autoFocus}
             onKeyDown={this.handleKeyDown}
             onKeyUp={this.handleKeyUp}
           />
