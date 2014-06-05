@@ -74,6 +74,7 @@ var pillbox = {};
       var selectedPills = this.state.selectedPills.map(function(pill, index) {
         return (
           <Pill
+            key={'selected-' + index}
             data={pill}
             highlighted={this.state.highlightedIndex == index}
             onRemove={this.removePill}
@@ -86,7 +87,6 @@ var pillbox = {};
 
       return (
         <div className='pillbox'>
-          <h1>Pill Box</h1>
           <div>
             {selectedPills}
             <Prescription
@@ -99,7 +99,6 @@ var pillbox = {};
             />
           </div>
           <input type='hidden' name='pillbox-selected' value={json}/>
-          <p>{json}</p>
         </div>
       );
     }
@@ -205,6 +204,7 @@ var pillbox = {};
       var items = this.props.items.map(function(item, index) {
         return (
           <PrescriptionItem
+            key={'prescription-item-' + index}
             data={item}
             highlighted={this.state.highlightedIndex == index}
             onMouseOver={this.setHighlight}
