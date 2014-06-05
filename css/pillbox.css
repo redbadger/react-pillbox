@@ -1,26 +1,70 @@
-.pill {
+.pillbox .pill {
     display: inline-block;
     padding: 0 0.3em;
     margin-left: 0.5em;
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
 }
 
-.pill:first-child {
+.pillbox .pill.highlighted{
+    background: #f6f6f6;
+    border-color: #bbb;
+}
+
+.pillbox .pill:first-child {
     margin-left: 0;
 }
 
-.autocomplete-item {
+.pillbox .pill .remove {
+    -webkit-appearance: none;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    background: transparent;
+    color: #666;
+    font-weight: bold;
+    margin: 0 0 0 0.5em;
+}
+
+.pillbox .pill .remove:hover {
+    color: #333;
+}
+
+.pillbox .pill .remove:active {
+    color: #000;
+}
+
+.pillbox .prescription {
+    display: inline-block;
+    position: relative;
+}
+
+.pillbox .prescription-list {
+    position: absolute;
+    background: #fff;
+    width: 100%;
+}
+
+.pillbox .prescription-item {
     display: block;
     background: #eee;
     padding: 0 0.3em;
     margin-top: 1px;
+    width: 100%;
+
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-.autocomplete-item:first-child {
+.pillbox .prescription-item:first-child {
     margin-top: 0;
 }
 
-.autocomplete-item.highlighted {
+.pillbox .prescription-item.highlighted {
     background: #666;
     color: #fff;
 }

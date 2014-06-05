@@ -6,6 +6,7 @@ var pillbox = {};
   pillbox.PillBox = React.createClass({
     getInitialState: function() {
       return {
+        highlightedIndex: -1,
         selectedPills: [],
         suggestedPills: []
       };
@@ -24,7 +25,7 @@ var pillbox = {};
       }
       this.clearPrescription();
     },
-    removeSelectedPill: function(pill) {
+    removePill: function(pill) {
       this.state.selectedPills.splice(this.state.selectedPills.indexOf(pill), 1);
       this.setState({selectedPills: this.state.selectedPills});
     },
@@ -42,34 +43,58 @@ var pillbox = {};
     clearPrescription: function() {
       this.setState({suggestedPills: []});
     },
-    render: function() {
-      var selectedPills = this.state.selectedPills.map(function(pill) {
-        return <Pill data={pill} onRemove={this.removeSelectedPill} />;
-      }, this);
-
-      var availablePills = this.props.pills.filter(function(pill) {
-        var isSelected = this.state.selectedPills.indexOf(pill) >= 0;
-        return !isSelected;
-      }, this).map(function(pill) {
-        return <Pill data={pill}/>;
+    highlightPillWithLabel: function(label) {
+      var found = -1;
+      this.state.selectedPills.forEach(function(pill, index) {
+        if(pill.label.toLowerCase() == label.toLowerCase()) {
+          found = index;
+          return;
+        }
       });
 
+      this.setState({highlightedIndex: found});
+    },
+    highlightPillAt: function(index) {
+      this.setState({highlightedIndex: index});
+
+      return this.state.selectedPills[index];
+    },
+    handleBackspace: function() {
+      var lastIndex = this.state.selectedPills.length - 1;
+      if(lastIndex == this.state.highlightedIndex) {
+        this.removePill(this.state.selectedPills[lastIndex]);
+      } else {
+        this.highlightPillAt(lastIndex);
+      }
+    },
+    render: function() {
+      var selectedPills = this.state.selectedPills.map(function(pill, index) {
+        return (
+          <Pill
+            data={pill}
+            highlighted={this.state.highlightedIndex == index}
+            onRemove={this.removePill}
+            onMouseOver={this.highlightPillWithLabel}
+          />
+        );
+      }, this);
+
+      var json = JSON.stringify(this.state.selectedPills);
+
       return (
-        <div>
+        <div className='pillbox'>
           <h1>Pill Box</h1>
           <div>
             {selectedPills}
+            <Prescription
+              items={this.state.suggestedPills}
+              onInput={this.updatePrescription}
+              onEnter={this.addPrescriptionItem}
+              onEscape={this.clearPrescription}
+              onBackspace={this.handleBackspace}
+            />
           </div>
-          <Prescription
-            items={this.state.suggestedPills}
-            onInput={this.updatePrescription}
-            onEnter={this.addPrescriptionItem}
-            onEscape={this.clearPrescription}
-          />
-          <div>
-            <h2>Available Pills</h2>
-            {availablePills}
-          </div>
+          <input type='hidden' name='pillbox-selected' value={json}/>
         </div>
       );
     }
@@ -81,14 +106,28 @@ var pillbox = {};
         this.props.onRemove(this.props.data);
       }
     },
+    handleMouseOver: function() {
+      this.props.onMouseOver(this.props.data.label);
+    },
+    handleMouseOut: function() {
+      this.props.onMouseOver('');
+    },
     render: function() {
+      var classes = ['pill'];
+      if(this.props.highlighted) classes.push('highlighted');
+
+      var className = classes.join(' ');
+
       var label = this.props.data.label;
-      var button = this.props.onRemove ? <button onClick={this.handleRemove}>X</button> : null;
+      var button = this.props.onRemove ? <button className='remove' onClick={this.handleRemove}>X</button> : null;
 
       return (
-        <div className='pill'>
+        <div
+          className={className}
+          onMouseOver={this.handleMouseOver}
+          onMouseOut={this.handleMouseOut}
+        >
           <span>{label}</span>
-          <span> ({this.props.data.value})</span>
           {button}
         </div>
       );
@@ -117,11 +156,21 @@ var pillbox = {};
       this.setState({highlightedIndex: 0});
     },
     postPrescription: function() {
-      this.props.onEnter(this.props.items[this.state.highlightedIndex].label);
+      if(this.props.items[this.state.highlightedIndex]) {
+        this.props.onEnter(this.props.items[this.state.highlightedIndex].label);
+      }
       this.clearLookup();
     },
+    handleKeyDown: function(event) {
+      if(event.which === 8) {
+        // BACKSPACE
+        if(this.refs.lookup.getDOMNode().value.length == 0) {
+          this.props.onBackspace();
+        }
+      }
+    },
     handleKeyUp: function(event) {
-      var input = event.target.value.trim();
+      var input = this.refs.lookup.getDOMNode().value.trim();
 
       this.props.onInput(input);
 
@@ -160,13 +209,14 @@ var pillbox = {};
       }, this);
 
       return (
-        <div>
+        <div className='prescription'>
           <input
-            ref="lookup"
-            type="text"
+            ref='lookup'
+            type='text'
+            onKeyDown={this.handleKeyDown}
             onKeyUp={this.handleKeyUp}
           />
-          <div>{items}</div>
+          <div className='prescription-list'>{items}</div>
         </div>
       );
     }
@@ -185,16 +235,14 @@ var pillbox = {};
       this.props.onClick();
     },
     render: function() {
-      var isHighlighted = this.state.highlighted || this.props.highlighted;
+      var classes = ['prescription-item'];
+      if(this.props.highlighted) classes.push('highlighted');
 
-      var classes = React.addons.classSet({
-        'autocomplete-item': true,
-        'highlighted': isHighlighted
-      });
+      var className = classes.join(' ');
 
       return (
         <div
-          className={classes}
+          className={className}
           onMouseOver={this.handleMouseOver}
           onClick={this.handleClick}
         >
