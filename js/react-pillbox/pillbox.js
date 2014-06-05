@@ -5,9 +5,12 @@ var pillbox = {};
 (function () {
   pillbox.PillBox = React.createClass({
     getInitialState: function() {
+      var selectedPills = this.props.pills.filter(function(pill) {
+        return pill.selected == true;
+      });
       return {
         highlightedIndex: -1,
-        selectedPills: [],
+        selectedPills: selectedPills,
         suggestedPills: []
       };
     },
@@ -95,6 +98,7 @@ var pillbox = {};
             />
           </div>
           <input type='hidden' name='pillbox-selected' value={json}/>
+          <p>{json}</p>
         </div>
       );
     }
