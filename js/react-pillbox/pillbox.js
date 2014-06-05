@@ -34,6 +34,7 @@ var pillbox = {};
     },
     updatePrescription: function(input) {
       if(input.length > 0) {
+        this.setState({highlightedIndex: -1});
         this.state.suggestedPills = this.props.pills.filter(function (pill) {
           var isSelected = this.state.selectedPills.indexOf(pill) >= 0;
           return !isSelected && pill.label.toLowerCase().indexOf(input.toLowerCase()) == 0;
@@ -62,6 +63,9 @@ var pillbox = {};
 
       return this.state.selectedPills[index];
     },
+    handleClick: function() {
+      this.refs.prescription.refs.lookup.getDOMNode().focus()
+    },
     handleBackspace: function() {
       var lastIndex = this.state.selectedPills.length - 1;
       if(lastIndex == this.state.highlightedIndex) {
@@ -86,10 +90,14 @@ var pillbox = {};
       var json = JSON.stringify(this.state.selectedPills);
 
       return (
-        <div className='pillbox'>
+        <div
+          className='pillbox'
+          onClick={this.handleClick}
+        >
           <div>
             {selectedPills}
             <Prescription
+              ref='prescription'
               items={this.state.suggestedPills}
               autoFocus={this.props.autoFocus}
               onInput={this.updatePrescription}
@@ -169,7 +177,7 @@ var pillbox = {};
       // BACKSPACE
       if(event.which === 8) {
         if(this.refs.lookup.getDOMNode().value.length == 0) {
-          this.props.onBackspace();
+          this.props.onBackspace(this.refs.lookup.getDOMNode().value);
         }
       }
     },
@@ -208,13 +216,15 @@ var pillbox = {};
             data={item}
             highlighted={this.state.highlightedIndex == index}
             onMouseOver={this.setHighlight}
-            onClick={this.postPrescription}
           />
         );
       }, this);
 
       return (
-        <div className='prescription'>
+        <div
+          className='prescription'
+          onClick={this.handleClick}
+        >
           <input
             ref='lookup'
             type='text'
