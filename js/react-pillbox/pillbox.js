@@ -3,6 +3,11 @@
 var pillbox = {};
 
 (function () {
+  function cancelEvent(event) {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
   pillbox.PillBox = React.createClass({
     getDefaultProps: function() {
       return {
@@ -54,7 +59,10 @@ var pillbox = {};
       });
     },
     clearPrescription: function() {
-      this.setState({suggestedPills: []});
+      this.setState({
+        highlightSuggested: 0,
+        suggestedPills: []
+      });
     },
     removePill: function(pill) {
       this.state.selectedPills.splice(this.state.selectedPills.indexOf(pill), 1);
@@ -124,25 +132,32 @@ var pillbox = {};
 
       // UP
       else if(event.which === 38) {
-        event.preventDefault();
-        event.stopPropagation();
+        cancelEvent(event);
+      }
+
+      // DOWN
+      else if(event.which === 40) {
+        cancelEvent(event);
+      }
+    },
+    handleKeyUp: function(event) {
+      this.updatePrescription(this.getLookup().trim());
+
+      // UP
+      if(event.which === 38) {
+        cancelEvent(event);
         this.highlightSuggestedPillAt(Math.max(0, this.state.highlightSuggested - 1));
       }
 
       // DOWN
       else if(event.which === 40) {
-        event.preventDefault();
-        event.stopPropagation();
+        cancelEvent(event);
         this.highlightSuggestedPillAt(Math.min(this.state.suggestedPills.length - 1, this.state.highlightSuggested + 1));
       }
     },
-    handleKeyUp: function(event) {
-      var input = this.getLookup().trim();
-
-      this.updatePrescription(input);
-    },
-    handleClick: function() {
-      this.refs.lookup.getDOMNode().focus()
+    handleClick: function(event) {
+      this.refs.lookup.getDOMNode().focus();
+      this.updatePrescription(this.getLookup().trim());
     },
     render: function() {
       var selectedPills = this.state.selectedPills.map(function(pill, index) {
@@ -159,12 +174,22 @@ var pillbox = {};
 
       var json = JSON.stringify(this.state.selectedPills);
 
+      var pillbox = this;
+      document.onclick = function(event) {
+        if(event.target != pillbox.refs.pills.getDOMNode()) {
+          pillbox.clearPrescription();
+        }
+      };
+
       return (
         <div
           className='pillbox'
           onClick={this.handleClick}
         >
-          <div className='pillbox-pills'>
+          <div
+            className='pillbox-pills'
+            ref='pills'
+          >
             {selectedPills}
             <span className='prescription'>
               <input
