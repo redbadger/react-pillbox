@@ -67,7 +67,10 @@ var pillbox = {};
           var isSelected = this.state.selectedPills.indexOf(pill) >= 0;
           return !isSelected && pill.label.toLowerCase().indexOf(input.toLowerCase()) == 0;
         }, this);
-        this.setState({suggestedPills: suggestedPills.slice(0, this.props.numSuggestions)});
+        this.setState({
+          suggestedPills: suggestedPills.slice(0, this.props.numSuggestions),
+          highlightSuggested: 0
+        });
       } else {
         this.clearPrescription();
       }
@@ -87,7 +90,11 @@ var pillbox = {};
       this.setState({highlightSelected: index});
     },
     highlightSuggestedPillAt: function(index) {
-      this.setState({highlightSuggested: index});
+      var pill = this.state.suggestedPills[index]
+      if(pill) {
+        this.setState({highlightSuggested: index});
+//        this.refs.lookup.getDOMNode().value = pill.label;
+      }
     },
     handleKeyDown: function(event) {
       this.setState({lookup: this.getLookup()});
@@ -157,7 +164,7 @@ var pillbox = {};
           className='pillbox'
           onClick={this.handleClick}
         >
-          <div>
+          <div className='pillbox-pills'>
             {selectedPills}
             <span className='prescription'>
               <input
@@ -197,7 +204,7 @@ var pillbox = {};
     },
     render: function() {
       var classes = ['pill'];
-      if(this.props.highlighted) classes.push('highlighted');
+      if(this.props.highlighted) classes.push('pill-highlighted');
 
       var className = classes.join(' ');
 
@@ -246,8 +253,15 @@ var pillbox = {};
           );
       }, this);
 
+      var classes = ['prescription-list'];
+      if(this.props.items.length == 0) classes.push('prescription-list-empty');
+
+      var className = classes.join(' ');
+
       return (
-        <div className='prescription-list'>{prescriptionItems}</div>
+        <div className={className}>
+          {prescriptionItems}
+        </div>
       );
     }
   });
@@ -266,7 +280,7 @@ var pillbox = {};
     },
     render: function() {
       var classes = ['prescription-item'];
-      if(this.props.highlighted) classes.push('highlighted');
+      if(this.props.highlighted) classes.push('prescription-item-highlighted');
 
       var className = classes.join(' ');
 
