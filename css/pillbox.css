@@ -20,6 +20,7 @@
     padding: 0 0.3em;
     margin: 0 0 0.5em 0.5em;
     border: 1px solid #ddd;
+    height: 1.3em;
     cursor: default;
 }
 
@@ -59,6 +60,7 @@
     -webkit-appearance: none;
     font: inherit;
     font-size: 1em;
+    height: 1.3em;
     outline: none;
     border: none;
     margin: 0;
