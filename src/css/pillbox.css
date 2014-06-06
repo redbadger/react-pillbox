@@ -1,0 +1,102 @@
+.pillbox,
+.pillbox * {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.pillbox {
+    position: relative;
+}
+
+.pillbox .pillbox-pills {
+    border: 1px solid #ddd;
+    padding: 0.5em 0.5em 0 0;
+    cursor: text;
+}
+
+.pillbox .pill {
+    display: inline-block;
+    padding: 0 0.3em;
+    margin: 0 0 0.5em 0.5em;
+    border: 1px solid #ddd;
+    height: 1.3em;
+    cursor: default;
+}
+
+.pillbox .pill.pill-highlighted{
+    background: #f6f6f6;
+    border-color: #bbb;
+}
+
+.pillbox .pill .remove {
+    -webkit-appearance: none;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    background: transparent;
+    color: #666;
+    font-weight: bold;
+    margin: 0 0 0 0.5em;
+}
+
+.pillbox .pill .remove:hover {
+    color: #333;
+}
+
+.pillbox .pill .remove:active {
+    color: #000;
+}
+
+.pillbox .prescription {
+    display: inline-block;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-bottom: 0.5em;
+    max-width: 100%;
+}
+
+.pillbox .prescription .prescription-lookup {
+    -webkit-appearance: none;
+    font: inherit;
+    font-size: 1em;
+    height: 1.3em;
+    outline: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+    max-width: 100%
+}
+
+.pillbox .prescription-list {
+    position: absolute;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-top: none;
+    width: 100%;
+}
+
+.pillbox .prescription-list.prescription-list-empty {
+    display: none;
+}
+
+.pillbox .prescription-item {
+    display: block;
+    background: #eee;
+    padding: 0 0.3em;
+    margin-top: 1px;
+    width: 100%;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pillbox .prescription-item:first-child {
+    margin-top: 0;
+}
+
+.pillbox .prescription-item.prescription-item-highlighted {
+    background: #666;
+    color: #fff;
+}

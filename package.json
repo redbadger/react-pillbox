@@ -1,0 +1,16 @@
+{
+  "name": "react-pillbox",
+  "version": "0.0.1",
+  "description": "Pillbox component for React",
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^3.7.0",
+    "gulp-karma": "0.0.4",
+    "gulp-react": "^0.3.3",
+    "karma": "^0.12.16",
+    "karma-chrome-launcher": "^0.1.4",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "karma-jasmine": "^0.1.5"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "react-pillbox",
+  "version": "0.0.1",
+  "description": "Pillbox component for React",
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "react": "~0.10.0"
+  },
+  "ignore": []
+}
