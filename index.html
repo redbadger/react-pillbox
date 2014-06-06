@@ -10,6 +10,7 @@
 <body>
     <h1>Pill Box</h1>
     <div id="example"></div>
+    <p>Some text underneath...</p>
     <script type="text/jsx" src="js/react-pillbox/pillbox.js"></script>
     <script type="text/jsx">
         /** @jsx React.DOM */
@@ -83,7 +84,7 @@
             }
         ];
         React.renderComponent(
-            <PillBox pills={pills} autoFocus={true}/>,
+            <PillBox pills={pills} autoFocus={true} numSuggestions={5}/>,
             document.getElementById('example')
         );
     </script>

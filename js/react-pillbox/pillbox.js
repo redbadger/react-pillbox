@@ -4,29 +4,57 @@ var pillbox = {};
 
 (function () {
   pillbox.PillBox = React.createClass({
+    getDefaultProps: function() {
+      return {
+        pills: [],
+        autoFocus: true,
+        numSuggestions: 5
+      };
+    },
     getInitialState: function() {
       var selectedPills = this.props.pills.filter(function(pill) {
         return pill.selected == true;
       });
       return {
-        highlightedIndex: -1,
+        highlightSelected: -1,
+        highlightSuggested: 0,
         selectedPills: selectedPills,
-        suggestedPills: []
+        suggestedPills: [],
+        lookup: ''
       };
     },
-    addPill: function(input) {
-      var found = this.props.pills.filter(function(pill) {
-        return pill.label.toLowerCase() == input.toLowerCase();
-      });
-      var item = found[0];
+    getLookup: function() {
+      return this.refs.lookup.getDOMNode().value
+    },
+    addSelectedPill: function() {
+      var item = this.state.suggestedPills[this.state.highlightSuggested];
+
+      this.clearLookup();
+      this.clearPrescription();
+
+      if(!item) return;
+
+      /*
+       * Check if the given pill is already selected.
+       */
       var filteredSelected = this.state.selectedPills.filter(function(pill) {
-        return pill.label.toLowerCase() == input.toLowerCase();
+        return pill.label.toLowerCase() == item.label.toLowerCase();
       });
       if(item && filteredSelected.length == 0) {
         this.state.selectedPills.push(item);
         this.setState({selectedPills: this.state.selectedPills});
       }
-      this.clearPrescription();
+    },
+    clearLookup: function() {
+      this.refs.lookup.getDOMNode().value = '';
+      this.setState({
+        highlightSelected: -1,
+        highlightSuggested: 0,
+        lookup: this.getLookup()
+      });
+    },
+    clearPrescription: function() {
+      this.setState({suggestedPills: []});
     },
     removePill: function(pill) {
       this.state.selectedPills.splice(this.state.selectedPills.indexOf(pill), 1);
@@ -34,20 +62,17 @@ var pillbox = {};
     },
     updatePrescription: function(input) {
       if(input.length > 0) {
-        this.setState({highlightedIndex: -1});
-        this.state.suggestedPills = this.props.pills.filter(function (pill) {
+        this.setState({highlightSelected: -1});
+        var suggestedPills = this.props.pills.filter(function (pill) {
           var isSelected = this.state.selectedPills.indexOf(pill) >= 0;
           return !isSelected && pill.label.toLowerCase().indexOf(input.toLowerCase()) == 0;
         }, this);
-        this.setState({suggestedPills: this.state.suggestedPills});
+        this.setState({suggestedPills: suggestedPills.slice(0, this.props.numSuggestions)});
       } else {
         this.clearPrescription();
       }
     },
-    clearPrescription: function() {
-      this.setState({suggestedPills: []});
-    },
-    highlightPillWithLabel: function(label) {
+    highlightSelectedPillWithLabel: function(label) {
       var found = -1;
       this.state.selectedPills.forEach(function(pill, index) {
         if(pill.label.toLowerCase() == label.toLowerCase()) {
@@ -56,23 +81,61 @@ var pillbox = {};
         }
       });
 
-      this.setState({highlightedIndex: found});
+      this.setState({highlightSelected: found});
     },
-    highlightPillAt: function(index) {
-      this.setState({highlightedIndex: index});
+    highlightSelectedPillAt: function(index) {
+      this.setState({highlightSelected: index});
+    },
+    highlightSuggestedPillAt: function(index) {
+      this.setState({highlightSuggested: index});
+    },
+    handleKeyDown: function(event) {
+      this.setState({lookup: this.getLookup()});
 
-      return this.state.selectedPills[index];
+      // BACKSPACE
+      if(event.which === 8) {
+        if(this.getLookup().length == 0) {
+          var lastIndex = this.state.selectedPills.length - 1;
+          if(lastIndex == this.state.highlightSelected) {
+            this.removePill(this.state.selectedPills[lastIndex]);
+          } else {
+            this.highlightSelectedPillAt(lastIndex);
+          }
+        }
+      }
+
+      // ENTER
+      if(event.which === 13) {
+        this.addSelectedPill();
+      }
+
+      // ESC
+      else if(event.which === 27) {
+        this.clearPrescription();
+        this.clearLookup();
+      }
+
+      // UP
+      else if(event.which === 38) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.highlightSuggestedPillAt(Math.max(0, this.state.highlightSuggested - 1));
+      }
+
+      // DOWN
+      else if(event.which === 40) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.highlightSuggestedPillAt(Math.min(this.state.suggestedPills.length - 1, this.state.highlightSuggested + 1));
+      }
+    },
+    handleKeyUp: function(event) {
+      var input = this.getLookup().trim();
+
+      this.updatePrescription(input);
     },
     handleClick: function() {
-      this.refs.prescription.refs.lookup.getDOMNode().focus()
-    },
-    handleBackspace: function() {
-      var lastIndex = this.state.selectedPills.length - 1;
-      if(lastIndex == this.state.highlightedIndex) {
-        this.removePill(this.state.selectedPills[lastIndex]);
-      } else {
-        this.highlightPillAt(lastIndex);
-      }
+      this.refs.lookup.getDOMNode().focus()
     },
     render: function() {
       var selectedPills = this.state.selectedPills.map(function(pill, index) {
@@ -80,9 +143,9 @@ var pillbox = {};
           <Pill
             key={'selected-' + index}
             data={pill}
-            highlighted={this.state.highlightedIndex == index}
+            highlighted={this.state.highlightSelected == index}
             onRemove={this.removePill}
-            onMouseOver={this.highlightPillWithLabel}
+            onMouseOver={this.highlightSelectedPillWithLabel}
           />
         );
       }, this);
@@ -96,16 +159,24 @@ var pillbox = {};
         >
           <div>
             {selectedPills}
-            <Prescription
-              ref='prescription'
-              items={this.state.suggestedPills}
-              autoFocus={this.props.autoFocus}
-              onInput={this.updatePrescription}
-              onEnter={this.addPill}
-              onEscape={this.clearPrescription}
-              onBackspace={this.handleBackspace}
-            />
+            <span className='prescription'>
+              <input
+                type='text'
+                size={this.state.lookup.length + 1}
+                className='prescription-lookup'
+                ref='lookup'
+                autoFocus={this.props.autoFocus}
+                onKeyDown={this.handleKeyDown}
+                onKeyUp={this.handleKeyUp}
+              />
+            </span>
           </div>
+          <PrescriptionList
+            items={this.state.suggestedPills}
+            highlightedIndex={this.state.highlightSuggested}
+            onMouseOver={this.highlightSuggestedPillAt}
+            onItemClick={this.addSelectedPill}
+          />
           <input type='hidden' name='pillbox-selected' value={json}/>
         </div>
       );
@@ -134,24 +205,19 @@ var pillbox = {};
       var button = this.props.onRemove ? <button className='remove' onClick={this.handleRemove}>X</button> : null;
 
       return (
-        <div
+        <span
           className={className}
           onMouseOver={this.handleMouseOver}
           onMouseOut={this.handleMouseOut}
         >
           <span>{label}</span>
           {button}
-        </div>
+        </span>
       );
     }
   });
 
-  var Prescription = React.createClass({
-    getInitialState: function() {
-      return {
-        highlightedIndex: 0
-      };
-    },
+  var PrescriptionList = React.createClass({
     setHighlight: function(label) {
       var found = 0;
       this.props.items.forEach(function(item, index) {
@@ -161,79 +227,27 @@ var pillbox = {};
         }
       });
 
-      this.setState({highlightedIndex: found});
+      this.props.onMouseOver(found);
     },
-    clearLookup: function() {
-      this.refs.lookup.getDOMNode().value = '';
-      this.setState({highlightedIndex: 0});
-    },
-    postPrescription: function() {
-      if(this.props.items[this.state.highlightedIndex]) {
-        this.props.onEnter(this.props.items[this.state.highlightedIndex].label);
-      }
-      this.clearLookup();
-    },
-    handleKeyDown: function(event) {
-      // BACKSPACE
-      if(event.which === 8) {
-        if(this.refs.lookup.getDOMNode().value.length == 0) {
-          this.props.onBackspace(this.refs.lookup.getDOMNode().value);
-        }
-      }
-    },
-    handleKeyUp: function(event) {
-      var input = this.refs.lookup.getDOMNode().value.trim();
-
-      this.props.onInput(input);
-
-      // ENTER
-      if(event.which === 13) {
-        this.postPrescription();
-        this.setState({highlightedIndex: 0});
-      }
-
-      // ESC
-      else if(event.which === 27) {
-        this.props.onEscape();
-        this.clearLookup();
-      }
-
-      // UP
-      else if(event.which === 38) {
-        this.setState({highlightedIndex: Math.max(0, this.state.highlightedIndex - 1)});
-      }
-
-      // DOWN
-      else if(event.which === 40) {
-        this.setState({highlightedIndex: Math.min(this.props.items.length - 1, this.state.highlightedIndex + 1)});
-      }
+    handleItemClick: function(label) {
+      this.setHighlight(label);
+      this.props.onItemClick();
     },
     render: function() {
-      var items = this.props.items.map(function(item, index) {
+      var prescriptionItems = this.props.items.map(function(item, index) {
         return (
           <PrescriptionItem
             key={'prescription-item-' + index}
             data={item}
-            highlighted={this.state.highlightedIndex == index}
+            highlighted={this.props.highlightedIndex == index}
             onMouseOver={this.setHighlight}
+            onClick={this.handleItemClick}
           />
-        );
+          );
       }, this);
 
       return (
-        <div
-          className='prescription'
-          onClick={this.handleClick}
-        >
-          <input
-            ref='lookup'
-            type='text'
-            autoFocus={this.props.autoFocus}
-            onKeyDown={this.handleKeyDown}
-            onKeyUp={this.handleKeyUp}
-          />
-          <div className='prescription-list'>{items}</div>
-        </div>
+        <div className='prescription-list'>{prescriptionItems}</div>
       );
     }
   });
@@ -248,7 +262,7 @@ var pillbox = {};
       this.props.onMouseOver(this.props.data.label);
     },
     handleClick: function() {
-      this.props.onClick();
+      this.props.onClick(this.props.data.label);
     },
     render: function() {
       var classes = ['prescription-item'];

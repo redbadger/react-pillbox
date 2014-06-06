@@ -1,6 +1,8 @@
 .pillbox {
+    position: relative;
     border: 1px solid #ddd;
     padding-top: 0.5em;
+    cursor: text;
 }
 
 .pillbox .pill {
@@ -8,6 +10,7 @@
     padding: 0 0.3em;
     margin: 0 0 0.5em 0.5em;
     border: 1px solid #ddd;
+    cursor: default;
 }
 
 .pillbox .pill.highlighted{
@@ -36,22 +39,25 @@
 
 .pillbox .prescription {
     display: inline-block;
-    position: relative;
-    margin-left: 0.5em;
-    margin-bottom: 0.5em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-bottom: 0.5em;
+    max-width: 100%;
 
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
 
-.pillbox .prescription input {
+.pillbox .prescription .prescription-lookup {
     -webkit-appearance: none;
+    font: inherit;
+    font-size: 1em;
     outline: none;
-    /*border: none;*/
+    border: none;
     margin: 0;
     padding: 0;
-    min-width: 1em;
+    max-width: 100%
 }
 
 .pillbox .prescription-list {
