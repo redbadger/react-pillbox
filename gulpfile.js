@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+var _ = require('lodash');
 var react = require('gulp-react');
 var karma = require('karma').server;
 
@@ -16,7 +17,7 @@ var karmaCommonConf = {
 /**
  * Run test once and exit
  */
-gulp.task('test', ['react'], function (done) {
+gulp.task('test', ['react', 'copy'], function (done) {
   karma.start(_.assign({}, karmaCommonConf, {singleRun: true}), done);
 });
 
@@ -56,5 +57,7 @@ gulp.task('react', function(done) {
         .pipe(gulp.dest('dev'));
 });
 
-gulp.task('default', ['react', 'copy', 'watch', 'tdd']);
 gulp.task('copy', ['copy-css', 'copy-lib']);
+
+gulp.task('default', ['react', 'copy', 'test']);
+gulp.task('dev', ['react', 'copy', 'watch', 'tdd']);
