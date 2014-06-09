@@ -7,6 +7,7 @@
 
 .pillbox {
     position: relative;
+    background: #F7F7F7;
 }
 
 .pillbox .pillbox-pills {
@@ -18,18 +19,26 @@
 .pillbox .pill,
 .pillbox .pill-placeholder {
     display: inline-block;
-    padding: 0 0.3em;
     margin: 0 0 0.5em 0.5em;
-    border: 1px solid #ddd;
-    height: 1.3em;
+    height: 1.6em;
+}
+
+.pillbox .pill {
+    padding: 0.15em 0.4em;
     cursor: default;
+    border: 1px solid #ddd;
+    background: #fff;
+
+    -webkit-transition: all 200ms linear;
+    -moz-transition: all 200ms linear;
+    -o-transition: all 200ms linear;
+    transition: all 200ms linear;
 }
 
 .pillbox .pill-placeholder {
     vertical-align: top;
     border: 1px solid #666;
     border-width: 1px 0;
-    height: 1.3em;
     padding: 0 2px;
 }
 
@@ -48,13 +57,16 @@
 
 .pillbox .pill .remove {
     -webkit-appearance: none;
+    font-family: 'Helvetica', 'Arial', sans-serif;
     cursor: pointer;
     outline: none;
     border: none;
-    background: transparent;
+    background: none;
     color: #666;
     font-weight: bold;
     margin: 0 0 0 0.5em;
+    padding: 0;
+    width: 1em;
 }
 
 .pillbox .pill .remove:hover {
@@ -80,6 +92,7 @@
     height: 1.3em;
     outline: none;
     border: none;
+    background: none;
     margin: 0;
     padding: 0;
     max-width: 100%
