@@ -6,6 +6,7 @@ var karma = require('karma').server;
 var karmaCommonConf = {
   browsers: ['PhantomJS'],
   frameworks: ['jasmine'],
+  reporters: ['dots'],
   files: [
     'test/helpers/phantomjs-shims.js',
     'dev/js/lib/react/react.js',

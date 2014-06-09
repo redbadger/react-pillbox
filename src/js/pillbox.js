@@ -11,6 +11,7 @@ var pillbox = {};
   pillbox.PillBox = React.createClass({
     getDefaultProps: function() {
       return {
+        name: 'pillbox',
         pills: [],
         autoFocus: true,
         numSuggestions: 5
@@ -21,6 +22,8 @@ var pillbox = {};
         return pill.selected == true;
       });
       return {
+        placeholderIndex: -1,
+        draggedIndex: -1,
         highlightSelected: -1,
         highlightSuggested: 0,
         selectedPills: selectedPills,
@@ -28,8 +31,17 @@ var pillbox = {};
         lookup: ''
       };
     },
+    componentDidMount: function() {
+      document.addEventListener('click', this.handleClickOutside);
+    },
+    componentWillUnmount: function() {
+      document.removeEventListener('click', this.handleClickOutside);
+    },
     getLookup: function() {
       return this.refs.lookup.getDOMNode().value
+    },
+    getJSON: function() {
+      return JSON.stringify(this.state.selectedPills);
     },
     addSelectedPill: function() {
       var item = this.state.suggestedPills[this.state.highlightSuggested];
@@ -83,7 +95,7 @@ var pillbox = {};
         this.clearPrescription();
       }
     },
-    highlightSelectedPillWithLabel: function(label) {
+    indexPillWithLabel: function(label) {
       var found = -1;
       this.state.selectedPills.forEach(function(pill, index) {
         if(pill.label.toLowerCase() == label.toLowerCase()) {
@@ -92,7 +104,10 @@ var pillbox = {};
         }
       });
 
-      this.setState({highlightSelected: found});
+      return found;
+    },
+    highlightSelectedPillWithLabel: function(label) {
+      this.setState({highlightSelected: this.indexPillWithLabel(label)});
     },
     highlightSelectedPillAt: function(index) {
       this.setState({highlightSelected: index});
@@ -101,7 +116,12 @@ var pillbox = {};
       var pill = this.state.suggestedPills[index]
       if(pill) {
         this.setState({highlightSuggested: index});
-//        this.refs.lookup.getDOMNode().value = pill.label;
+      }
+    },
+    handleClickOutside: function(event) {
+      var pillbox = this;
+      if(event.target != pillbox.refs.pills.getDOMNode()) {
+        pillbox.clearPrescription();
       }
     },
     handleKeyDown: function(event) {
@@ -159,6 +179,65 @@ var pillbox = {};
       this.refs.lookup.getDOMNode().focus();
       this.updatePrescription(this.getLookup().trim());
     },
+    setPlaceholder: function(label) {
+      this.setState({draggedIndex: this.indexPillWithLabel(label)});
+    },
+    removePlaceholder: function() {
+      var placeholderIndex = this.state.placeholderIndex;
+      var newIndex = this.state.draggedIndex < placeholderIndex ? placeholderIndex - 1 : placeholderIndex;
+      var pill = this.state.selectedPills[this.state.draggedIndex];
+      var selectedPills = this.state.selectedPills;
+
+      selectedPills.splice(this.state.draggedIndex, 1);
+      selectedPills.splice(newIndex, 0, pill);
+
+      this.setState({
+        placeholderIndex: -1,
+        highlightSelected: newIndex,
+        selectedPills: selectedPills
+      });
+    },
+    handleDragOver: function(event) {
+      event.preventDefault();
+
+      /*
+       * If dragging over a pill
+       */
+      var eventTarget = event.target;
+      if(eventTarget.parentNode.className.split(' ').indexOf('pill') >= 0) {
+        eventTarget = eventTarget.parentNode;
+      }
+      if(eventTarget.className.split(' ').indexOf('pill') >= 0) {
+        var found = -1;
+        var index = -1;
+        var tmp = -1;
+        var childNodes = this.refs.pills.getDOMNode().childNodes;
+        var placeholderIndex = this.state.placeholderIndex;
+
+        for(var i = 0 ; i < childNodes.length ; ++i) {
+          var child = childNodes[i];
+          if(placeholderIndex != i) {
+            ++index;
+          }
+
+          if(child.getAttribute('data-key') == eventTarget.getAttribute('data-key')) {
+            found = index;
+            tmp = i;
+            break;
+          }
+        }
+
+        if(placeholderIndex != found) {
+          this.setState({placeholderIndex: found});
+        }
+      }
+      /*
+       * Place the placeholder at the end of the list
+       */
+      else if(eventTarget.className == 'prescription') {
+        this.setState({placeholderIndex: this.state.selectedPills.length});
+      }
+    },
     render: function() {
       var selectedPills = this.state.selectedPills.map(function(pill, index) {
         return (
@@ -168,18 +247,18 @@ var pillbox = {};
             highlighted={this.state.highlightSelected == index}
             onRemove={this.removePill}
             onMouseOver={this.highlightSelectedPillWithLabel}
+            onDragStart={this.setPlaceholder}
+            onDragEnd={this.removePlaceholder}
           />
         );
       }, this);
 
-      var json = JSON.stringify(this.state.selectedPills);
+      var placeholderIndex = this.state.placeholderIndex;
+      if(placeholderIndex >= 0) {
+        selectedPills.splice(this.state.placeholderIndex, 0, <PlaceholderPill data={this.state.selectedPills[this.state.draggedIndex].label}/>);
+      }
 
-      var pillbox = this;
-      document.onclick = function(event) {
-        if(event.target != pillbox.refs.pills.getDOMNode()) {
-          pillbox.clearPrescription();
-        }
-      };
+      var json = this.getJSON();
 
       return (
         <div
@@ -189,6 +268,7 @@ var pillbox = {};
           <div
             className='pillbox-pills'
             ref='pills'
+            onDragOver={this.handleDragOver}
           >
             {selectedPills}
             <span className='prescription'>
@@ -209,7 +289,7 @@ var pillbox = {};
             onMouseOver={this.highlightSuggestedPillAt}
             onItemClick={this.addSelectedPill}
           />
-          <input type='hidden' name='pillbox-selected' value={json}/>
+          <input type='hidden' name={this.props.name} value={json}/>
         </div>
       );
     }
@@ -217,15 +297,21 @@ var pillbox = {};
 
   var Pill = React.createClass({
     handleRemove: function() {
-      if(this.props.onRemove) {
-        this.props.onRemove(this.props.data);
-      }
+      this.props.onRemove(this.props.data);
     },
     handleMouseOver: function() {
       this.props.onMouseOver(this.props.data.label);
     },
     handleMouseOut: function() {
       this.props.onMouseOver('');
+    },
+    handleDragStart: function(event) {
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData("text/html", event.currentTarget); // Firefox
+      this.props.onDragStart(this.props.data.label);
+    },
+    handleDragEnd: function() {
+      this.props.onDragEnd();
     },
     render: function() {
       var classes = ['pill'];
@@ -238,13 +324,25 @@ var pillbox = {};
 
       return (
         <span
+          draggable='true'
           className={className}
+          data-key={this.props.key}
           onMouseOver={this.handleMouseOver}
           onMouseOut={this.handleMouseOut}
+          onDragStart={this.handleDragStart}
+          onDragEnd={this.handleDragEnd}
         >
           <span>{label}</span>
           {button}
         </span>
+      );
+    }
+  });
+
+  var PlaceholderPill = React.createClass({
+    render: function() {
+      return (
+        <span className='pill-placeholder'></span>
       );
     }
   });

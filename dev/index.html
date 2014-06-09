@@ -41,6 +41,7 @@
                 value: 'lorrrrem'
             },
             {
+                selected: true,
                 label: 'Ipsum',
                 value: 'ipsum'
             },
@@ -58,6 +59,7 @@
                 value: 'dooolor'
             },
             {
+                selected: true,
                 label: 'Sit',
                 value: 'sit'
             },
@@ -71,6 +73,7 @@
                 value: 'consectetur'
             },
             {
+                selected: true,
                 label: 'Adipiscing',
                 value: 'adipiscing'
             },
@@ -83,8 +86,8 @@
                 value: 'lorem-ipsum'
             }
         ];
-        React.renderComponent(
-            <PillBox pills={pills} autoFocus={true} numSuggestions={5}/>,
+        var comp = React.renderComponent(
+            <PillBox name='loremipsum' pills={pills} autoFocus={true} numSuggestions={5}/>,
             document.getElementById('example')
         );
     </script>

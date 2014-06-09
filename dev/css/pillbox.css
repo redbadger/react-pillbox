@@ -15,7 +15,8 @@
     cursor: text;
 }
 
-.pillbox .pill {
+.pillbox .pill,
+.pillbox .pill-placeholder {
     display: inline-block;
     padding: 0 0.3em;
     margin: 0 0 0.5em 0.5em;
@@ -24,7 +25,23 @@
     cursor: default;
 }
 
-.pillbox .pill.pill-highlighted{
+.pillbox .pill-placeholder {
+    vertical-align: top;
+    border: 1px solid #666;
+    border-width: 1px 0;
+    height: 1.3em;
+    padding: 0 2px;
+}
+
+.pillbox .pill-placeholder:before {
+    display: block;
+    content: '';
+    width: 2px;
+    height: 100%;
+    background: #666;
+}
+
+.pillbox .pill.pill-highlighted {
     background: #f6f6f6;
     border-color: #bbb;
 }
