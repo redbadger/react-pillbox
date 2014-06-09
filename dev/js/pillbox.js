@@ -40,6 +40,9 @@ var pillbox = {};
     getLookup: function() {
       return this.refs.lookup.getDOMNode().value
     },
+    getAllSelectedPills: function() {
+      return this.state.selectedPills;
+    },
     getJSON: function() {
       return JSON.stringify(this.state.selectedPills);
     },
@@ -295,7 +298,7 @@ var pillbox = {};
     }
   });
 
-  var Pill = React.createClass({displayName: 'Pill',
+  var Pill = pillbox.Pill = React.createClass({displayName: 'Pill',
     handleRemove: function() {
       this.props.onRemove(this.props.data);
     },
@@ -339,7 +342,7 @@ var pillbox = {};
     }
   });
 
-  var PlaceholderPill = React.createClass({displayName: 'PlaceholderPill',
+  var PlaceholderPill = pillbox.PlaceholderPill = React.createClass({displayName: 'PlaceholderPill',
     render: function() {
       return (
         React.DOM.span( {className:"pill-placeholder"})
@@ -347,7 +350,7 @@ var pillbox = {};
     }
   });
 
-  var PrescriptionList = React.createClass({displayName: 'PrescriptionList',
+  var PrescriptionList = pillbox.PrescriptionList = React.createClass({displayName: 'PrescriptionList',
     setHighlight: function(label) {
       var found = 0;
       this.props.items.forEach(function(item, index) {
@@ -389,7 +392,7 @@ var pillbox = {};
     }
   });
 
-  var PrescriptionItem = React.createClass({displayName: 'PrescriptionItem',
+  var PrescriptionItem = pillbox.PrescriptionItem = React.createClass({displayName: 'PrescriptionItem',
     getInitialState: function() {
       return {
         highlighted: false

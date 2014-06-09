@@ -8,8 +8,8 @@ var karmaCommonConf = {
   frameworks: ['jasmine'],
   reporters: ['dots'],
   files: [
-    'test/helpers/phantomjs-shims.js',
-    'dev/js/lib/react/react.js',
+    'test/helpers/**/*.js',
+    'dev/js/lib/react/react-with-addons.js',
     'dev/js/pillbox.js',
     'test/**/*.spec.js'
   ]
@@ -18,7 +18,7 @@ var karmaCommonConf = {
 /**
  * Run test once and exit
  */
-gulp.task('test', ['react', 'copy'], function (done) {
+gulp.task('test', ['react-dev', 'react-test', 'copy'], function (done) {
   karma.start(_.assign({}, karmaCommonConf, {singleRun: true}), done);
 });
 
@@ -30,7 +30,7 @@ gulp.task('tdd', function (done) {
 });
 
 gulp.task('watch', function(done) {
-  gulp.watch(['src/**/*.js', 'src/css/**/*'], ['react', 'copy-css']);
+  gulp.watch(['src/**/*', 'test/**/*'], ['react-dev', 'react-test', 'copy-css']);
 });
 
 /**
@@ -52,13 +52,22 @@ gulp.task('copy-lib', function(done) {
 /**
  * Transform JSX files and copy over to dev
  */
-gulp.task('react', function(done) {
-  return gulp.src('src/**/*.js')
+gulp.task('react-dev', function(done) {
+  return gulp.src('src/**/*.jsx')
         .pipe(react())
         .pipe(gulp.dest('dev'));
 });
 
+/**
+ * Transform JSX spec files
+ */
+gulp.task('react-test', function(done) {
+  return gulp.src('test/**/*.jsx')
+    .pipe(react())
+    .pipe(gulp.dest('test'));
+});
+
 gulp.task('copy', ['copy-css', 'copy-lib']);
 
-gulp.task('default', ['react', 'copy', 'test']);
-gulp.task('dev', ['react', 'copy', 'watch', 'tdd']);
+gulp.task('default', ['react-dev', 'copy', 'test']);
+gulp.task('dev', ['react-dev', 'copy', 'watch', 'tdd']);
