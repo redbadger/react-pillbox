@@ -295,7 +295,7 @@ var pillbox = {};
             onMouseOver={this.highlightSuggestedPillAt}
             onItemClick={this.addSelectedPill}
           />
-          <input type='hidden' name={this.props.name} value={json}/>
+          <input name={this.props.name} value={json} style={{display: 'none'}} readOnly/>
         </div>
       );
     }
