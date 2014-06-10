@@ -9,7 +9,8 @@
 </head>
 <body>
     <h1>Pill Box</h1>
-    <div id="example"></div>
+    <div id="example1"></div>
+    <div id="example2"></div>
     <p>Some text underneath...</p>
     <script type="text/jsx" src="js/pillbox.js"></script>
     <script type="text/jsx">
@@ -86,9 +87,13 @@
                 value: 'lorem-ipsum'
             }
         ];
-        var comp = React.renderComponent(
+        var comp1 = React.renderComponent(
             <PillBox name='loremipsum' pills={pills} autoFocus={true} numSuggestions={5}/>,
-            document.getElementById('example')
+            document.getElementById('example1')
+        );
+        var comp2 = React.renderComponent(
+            <PillBox name='loremipsum' pills={pills} autoFocus={true} numSuggestions={5}/>,
+            document.getElementById('example2')
         );
     </script>
 </body>
