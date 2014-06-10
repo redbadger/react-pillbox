@@ -385,7 +385,11 @@ var pillbox = {};
       var className = classes.join(' ');
 
       var label = this.props.data.label;
-      var button = this.props.onRemove ? React.DOM.button( {tabIndex:"-1", className:"remove", onClick:this.handleRemove}, "X") : null;
+      var button = this.props.onRemove ?
+        React.DOM.button( {tabIndex:"-1", className:"remove", onClick:this.handleRemove}, 
+          React.DOM.span(null, "X")
+        )
+        : null;
 
       return (
         React.DOM.span(
