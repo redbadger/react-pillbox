@@ -1,5 +1,6 @@
 var gulp = require('gulp');
 var _ = require('lodash');
+var connect = require('gulp-connect');
 var react = require('gulp-react');
 var karma = require('karma').server;
 var minifyCss = require('gulp-minify-css');
@@ -33,6 +34,13 @@ gulp.task('tdd', function (done) {
 
 gulp.task('watch', function(done) {
   gulp.watch(['src/**/*', 'test/**/*'], ['react-dev', 'react-test', 'copy-dev-css']);
+});
+
+gulp.task('connect', function() {
+  connect.server({
+    root: ['dev'],
+    port: 1337
+  })
 });
 
 /**
@@ -92,5 +100,5 @@ gulp.task('copy-dev', ['copy-dev-css', 'copy-dev-lib']);
 gulp.task('copy-dist', ['copy-dist-css']);
 
 gulp.task('default', ['react-dev', 'copy-dev', 'test']);
-gulp.task('dev', ['react-dev', 'copy-dev', 'watch', 'tdd']);
+gulp.task('dev', ['react-dev', 'copy-dev', 'watch', 'connect', 'tdd']);
 gulp.task('dist', ['default', 'react-dist', 'copy-dist']);

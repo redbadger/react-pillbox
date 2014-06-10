@@ -223,7 +223,7 @@ var pillbox = {};
     setPlaceholder: function(label) {
       this.setState({draggedIndex: this.indexPillWithLabel(label)});
     },
-    removePlaceholder: function() {
+    handleDrop: function() {
       var placeholderIndex = this.state.placeholderIndex;
       var newIndex = this.state.draggedIndex < placeholderIndex ? placeholderIndex - 1 : placeholderIndex;
       var pill = this.state.selectedPills[this.state.draggedIndex];
@@ -299,7 +299,7 @@ var pillbox = {};
             onRemove:this.removePill,
             onMouseOver:this.highlightSelectedPillWithLabel,
             onDragStart:this.setPlaceholder,
-            onDragEnd:this.removePlaceholder}
+            onDragEnd:this.handleDrop}
           )
         );
       }, this);
@@ -348,6 +348,17 @@ var pillbox = {};
   });
 
   var Pill = pillbox.Pill = React.createClass({displayName: 'Pill',
+    componentDidMount: function() {
+      this.getDOMNode().addEventListener('selectstart', function(event) {
+        /* IE8 */
+        event.preventDefault();
+        event.stopPropagation();
+
+        var element = event.target;
+
+        element.dragDrop();
+      });
+    },
     handleRemove: function() {
       this.props.onRemove(this.props.data);
     },
@@ -359,7 +370,9 @@ var pillbox = {};
     },
     handleDragStart: function(event) {
       event.dataTransfer.effectAllowed = 'move';
-      event.dataTransfer.setData("text/html", event.currentTarget); // Firefox
+      if (navigator.userAgent.indexOf("Firefox")!=-1) {
+        event.dataTransfer.setData("text/html", this.props.data.label); // Firefox
+      }
       this.props.onDragStart(this.props.data.label);
     },
     handleDragEnd: function() {
