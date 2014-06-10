@@ -305,8 +305,9 @@ var pillbox = {};
       }, this);
 
       var placeholderIndex = this.state.placeholderIndex;
-      if(placeholderIndex >= 0) {
-        selectedPills.splice(this.state.placeholderIndex, 0, PlaceholderPill( {data:this.state.selectedPills[this.state.draggedIndex].label}));
+      var draggedIndex = this.state.draggedIndex;
+      if(placeholderIndex >= 0 && draggedIndex >= 0) {
+        selectedPills.splice(this.state.placeholderIndex, 0, PlaceholderPill( {data:this.state.selectedPills[draggedIndex].label}));
       }
 
       var json = this.getJSON();
