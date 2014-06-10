@@ -144,6 +144,9 @@ var pillbox = {};
 
       // ENTER
       if(event.which === 13) {
+        event.stopPropagation();
+        event.preventDefault();
+
         this.addSelectedPill();
       }
 
