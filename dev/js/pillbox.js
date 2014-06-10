@@ -65,9 +65,16 @@ var pillbox = {};
     addToSelected: function(index) {
       var selectedPills = this.state.selectedPills;
       var item = this.props.pills[index];
+
       if(item) {
-        selectedPills.push(item)
-        this.setState({selectedPills: selectedPills})
+        var filteredSelected = this.state.selectedPills.filter(function(pill) {
+          return pill.label.toLowerCase() == item.label.toLowerCase();
+        });
+
+        if(filteredSelected.length == 0) {
+          selectedPills.push(item)
+          this.setState({selectedPills: selectedPills})
+        }
       }
     },
     addSuggestedToSelected: function() {
@@ -89,6 +96,9 @@ var pillbox = {};
         selectedPills.push(item);
         this.setState({selectedPills: selectedPills});
       }
+    },
+    clearSelected: function() {
+      this.setState({selectedPills: []});
     },
     clearLookup: function() {
       this.refs.lookup.getDOMNode().value = '';

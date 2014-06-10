@@ -47,6 +47,23 @@ describe('Pill Box Component', function() {
         pillbox.addToSelected(999);
         expect(pillbox.getAllSelectedPills().length).toBe(1);
       });
+
+      it('should not add a pill to the selected if the pill is already selected', function() {
+        pillbox.addToSelected(2);
+        pillbox.addToSelected(2);
+        pillbox.addToSelected(2);
+
+        expect(pillbox.getAllSelectedPills().length).toBe(1);
+      });
+
+      it('should be able to clear the selected', function() {
+        pillbox.addToSelected(1);
+        pillbox.addToSelected(2);
+        pillbox.addToSelected(3);
+        pillbox.clearSelected();
+
+        expect(pillbox.getAllSelectedPills().length).toBe(0);
+      });
     });
   });
 });
