@@ -62,7 +62,15 @@ var pillbox = {};
     getJSON: function() {
       return JSON.stringify(this.state.selectedPills);
     },
-    addSelectedPill: function() {
+    addToSelected: function(index) {
+      var selectedPills = this.state.selectedPills;
+      var item = this.props.pills[index];
+      if(item) {
+        selectedPills.push(item)
+        this.setState({selectedPills: selectedPills})
+      }
+    },
+    addSuggestedToSelected: function() {
       var item = this.state.suggestedPills[this.state.highlightSuggested];
 
       this.clearLookup();
@@ -77,8 +85,9 @@ var pillbox = {};
         return pill.label.toLowerCase() == item.label.toLowerCase();
       });
       if(item && filteredSelected.length == 0) {
-        this.state.selectedPills.push(item);
-        this.setState({selectedPills: this.state.selectedPills});
+        var selectedPills = this.state.selectedPills;
+        selectedPills.push(item);
+        this.setState({selectedPills: selectedPills});
       }
     },
     clearLookup: function() {
@@ -163,7 +172,7 @@ var pillbox = {};
         event.stopPropagation();
         event.preventDefault();
 
-        this.addSelectedPill();
+        this.addSuggestedToSelected();
       }
 
       // ESC
@@ -319,7 +328,7 @@ var pillbox = {};
             {items:this.state.suggestedPills,
             highlightedIndex:this.state.highlightSuggested,
             onMouseOver:this.highlightSuggestedPillAt,
-            onItemClick:this.addSelectedPill}
+            onItemClick:this.addSuggestedToSelected}
           ),
           React.DOM.input( {ref:"json", type:"hidden", name:this.props.name, value:json})
         )

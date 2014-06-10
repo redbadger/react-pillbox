@@ -36,6 +36,17 @@ describe('Pill Box Component', function() {
       it('should have no selected pills', function() {
         expect(pillbox.getAllSelectedPills().length).toBe(0);
       });
+
+      it('should be able to add a selected pill', function() {
+        pillbox.addToSelected(2);
+        expect(pillbox.getAllSelectedPills().length).toBe(1);
+      });
+
+      it('should not add unavailable pill to the selected', function() {
+        pillbox.addToSelected(2);
+        pillbox.addToSelected(999);
+        expect(pillbox.getAllSelectedPills().length).toBe(1);
+      });
     });
   });
 });
