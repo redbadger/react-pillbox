@@ -64,6 +64,8 @@ var pillbox = {};
         this.state.selectedPills.push(item);
         this.setState({selectedPills: this.state.selectedPills});
       }
+
+      this.handleChange();
     },
     clearLookup: function() {
       this.refs.lookup.getDOMNode().value = '';
@@ -82,6 +84,7 @@ var pillbox = {};
     removePill: function(pill) {
       this.state.selectedPills.splice(this.state.selectedPills.indexOf(pill), 1);
       this.setState({selectedPills: this.state.selectedPills});
+      this.handleChange();
     },
     updatePrescription: function(input) {
       if(input.length > 0) {
@@ -196,6 +199,7 @@ var pillbox = {};
 
       selectedPills.splice(this.state.draggedIndex, 1);
       selectedPills.splice(newIndex, 0, pill);
+      this.handleChange();
 
       this.setState({
         placeholderIndex: -1,
@@ -242,6 +246,16 @@ var pillbox = {};
        */
       else if(eventTarget.className == 'prescription') {
         this.setState({placeholderIndex: this.state.selectedPills.length});
+      }
+    },
+    handleChange: function() {
+      if ("createEvent" in document) {
+        var evt = document.createEvent("HTMLEvents");
+        evt.initEvent("change", false, true);
+        this.getDOMNode().dispatchEvent(evt);
+      }
+      else {
+        this.getDOMNode().fireEvent("onchange");
       }
     },
     render: function() {
@@ -295,7 +309,7 @@ var pillbox = {};
             onMouseOver:this.highlightSuggestedPillAt,
             onItemClick:this.addSelectedPill}
           ),
-          React.DOM.input( {name:this.props.name, value:json, style:{display: 'none'}, readOnly:true})
+          React.DOM.input( {type:"hidden", name:this.props.name, value:json})
         )
       );
     }

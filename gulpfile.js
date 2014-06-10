@@ -2,6 +2,8 @@ var gulp = require('gulp');
 var _ = require('lodash');
 var react = require('gulp-react');
 var karma = require('karma').server;
+var minifyCss = require('gulp-minify-css');
+var uglify = require('gulp-uglify');
 
 var karmaCommonConf = {
   browsers: ['PhantomJS'],
@@ -46,6 +48,7 @@ gulp.task('copy-dev-css', function(done) {
  */
 gulp.task('copy-dist-css', function(done) {
   return gulp.src('src/css/**/*')
+    .pipe(minifyCss())
     .pipe(gulp.dest('dist/css'));
 });
 
@@ -81,6 +84,7 @@ gulp.task('react-test', function(done) {
 gulp.task('react-dist', function(done) {
   return gulp.src('src/**/*.jsx')
     .pipe(react())
+    .pipe(uglify())
     .pipe(gulp.dest('dist'));
 });
 
