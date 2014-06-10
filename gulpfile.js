@@ -18,7 +18,7 @@ var karmaCommonConf = {
 /**
  * Run test once and exit
  */
-gulp.task('test', ['react-dev', 'react-test', 'copy'], function (done) {
+gulp.task('test', ['react-dev', 'react-test', 'copy-dev'], function (done) {
   karma.start(_.assign({}, karmaCommonConf, {singleRun: true}), done);
 });
 
@@ -30,21 +30,29 @@ gulp.task('tdd', function (done) {
 });
 
 gulp.task('watch', function(done) {
-  gulp.watch(['src/**/*', 'test/**/*'], ['react-dev', 'react-test', 'copy-css']);
+  gulp.watch(['src/**/*', 'test/**/*'], ['react-dev', 'react-test', 'copy-dev-css']);
 });
 
 /**
  * Copy css files to dev
  */
-gulp.task('copy-css', function(done) {
+gulp.task('copy-dev-css', function(done) {
   return gulp.src('src/css/**/*')
         .pipe(gulp.dest('dev/css'));
 });
 
 /**
+ * Copy css files to dist
+ */
+gulp.task('copy-dist-css', function(done) {
+  return gulp.src('src/css/**/*')
+    .pipe(gulp.dest('dist/css'));
+});
+
+/**
  * Copy react.js to dev
  */
-gulp.task('copy-lib', function(done) {
+gulp.task('copy-dev-lib', function(done) {
   return gulp.src(['bower_components/**/*'])
     .pipe(gulp.dest('dev/js/lib'));
 });
@@ -67,7 +75,18 @@ gulp.task('react-test', function(done) {
     .pipe(gulp.dest('test'));
 });
 
-gulp.task('copy', ['copy-css', 'copy-lib']);
+/**
+ * Transform JSX files and copy over to dist
+ */
+gulp.task('react-dist', function(done) {
+  return gulp.src('src/**/*.jsx')
+    .pipe(react())
+    .pipe(gulp.dest('dist'));
+});
 
-gulp.task('default', ['react-dev', 'copy', 'test']);
-gulp.task('dev', ['react-dev', 'copy', 'watch', 'tdd']);
+gulp.task('copy-dev', ['copy-dev-css', 'copy-dev-lib']);
+gulp.task('copy-dist', ['copy-dist-css']);
+
+gulp.task('default', ['react-dev', 'copy-dev', 'test']);
+gulp.task('dev', ['react-dev', 'copy-dev', 'watch', 'tdd']);
+gulp.task('dist', ['default', 'react-dist', 'copy-dist']);

@@ -1,0 +1,132 @@
+.pillbox,
+.pillbox * {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.pillbox {
+    position: relative;
+    background: #F7F7F7;
+}
+
+.pillbox .pillbox-pills {
+    border: 1px solid #ddd;
+    padding: 0.5em 0.5em 0 0;
+    cursor: text;
+}
+
+.pillbox .pill,
+.pillbox .pill-placeholder {
+    display: inline-block;
+    margin: 0 0 0.5em 0.5em;
+    height: 1.6em;
+}
+
+.pillbox .pill {
+    padding: 0.15em 0.4em;
+    cursor: default;
+    border: 1px solid #ddd;
+    background: #fff;
+
+    -webkit-transition: all 200ms linear;
+    -moz-transition: all 200ms linear;
+    -o-transition: all 200ms linear;
+    transition: all 200ms linear;
+}
+
+.pillbox .pill-placeholder {
+    vertical-align: top;
+    border: 1px solid #666;
+    border-width: 1px 0;
+    padding: 0 2px;
+}
+
+.pillbox .pill-placeholder:before {
+    display: block;
+    content: '';
+    width: 2px;
+    height: 100%;
+    background: #666;
+}
+
+.pillbox .pill.pill-highlighted {
+    background: #f6f6f6;
+    border-color: #bbb;
+}
+
+.pillbox .pill .remove {
+    -webkit-appearance: none;
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    background: none;
+    color: #666;
+    font-weight: bold;
+    margin: 0 0 0 0.5em;
+    padding: 0;
+    width: 1em;
+}
+
+.pillbox .pill .remove:hover {
+    color: #333;
+}
+
+.pillbox .pill .remove:active {
+    color: #000;
+}
+
+.pillbox .prescription {
+    display: inline-block;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-bottom: 0.5em;
+    max-width: 100%;
+}
+
+.pillbox .prescription .prescription-lookup {
+    -webkit-appearance: none;
+    font: inherit;
+    font-size: 1em;
+    height: 1.3em;
+    outline: none;
+    border: none;
+    background: none;
+    margin: 0;
+    padding: 0;
+    max-width: 100%
+}
+
+.pillbox .prescription-list {
+    position: absolute;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-top: none;
+    width: 100%;
+}
+
+.pillbox .prescription-list.prescription-list-empty {
+    display: none;
+}
+
+.pillbox .prescription-item {
+    display: block;
+    background: #eee;
+    padding: 0 0.3em;
+    margin-top: 1px;
+    width: 100%;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pillbox .prescription-item:first-child {
+    margin-top: 0;
+}
+
+.pillbox .prescription-item.prescription-item-highlighted {
+    background: #666;
+    color: #fff;
+}
