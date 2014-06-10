@@ -371,7 +371,7 @@ var pillbox = {};
       var className = classes.join(' ');
 
       var label = this.props.data.label;
-      var button = this.props.onRemove ? <button className='remove' onClick={this.handleRemove}>X</button> : null;
+      var button = this.props.onRemove ? <button tabIndex='-1' className='remove' onClick={this.handleRemove}>X</button> : null;
 
       return (
         <span
