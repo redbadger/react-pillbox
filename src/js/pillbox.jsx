@@ -8,6 +8,8 @@ var pillbox = {};
     event.stopPropagation();
   };
 
+  var changed = false;
+
   pillbox.PillBox = React.createClass({
     getDefaultProps: function() {
       return {
@@ -33,9 +35,23 @@ var pillbox = {};
     },
     componentDidMount: function() {
       document.addEventListener('click', this.handleClickOutside);
+      if(this.refs.json.getDOMNode().value != []) {
+        this.triggerChange();
+      }
     },
     componentWillUnmount: function() {
       document.removeEventListener('click', this.handleClickOutside);
+    },
+    componentWillUpdate: function() {
+      if(this.refs.json.getDOMNode().value != this.getJSON()) {
+        changed = true
+      }
+    },
+    componentDidUpdate: function() {
+      if(changed) {
+        this.triggerChange();
+        changed = false;
+      }
     },
     getLookup: function() {
       return this.refs.lookup.getDOMNode().value
@@ -64,8 +80,6 @@ var pillbox = {};
         this.state.selectedPills.push(item);
         this.setState({selectedPills: this.state.selectedPills});
       }
-
-      this.handleChange();
     },
     clearLookup: function() {
       this.refs.lookup.getDOMNode().value = '';
@@ -84,7 +98,6 @@ var pillbox = {};
     removePill: function(pill) {
       this.state.selectedPills.splice(this.state.selectedPills.indexOf(pill), 1);
       this.setState({selectedPills: this.state.selectedPills});
-      this.handleChange();
     },
     updatePrescription: function(input) {
       if(input.length > 0) {
@@ -199,7 +212,6 @@ var pillbox = {};
 
       selectedPills.splice(this.state.draggedIndex, 1);
       selectedPills.splice(newIndex, 0, pill);
-      this.handleChange();
 
       this.setState({
         placeholderIndex: -1,
@@ -248,7 +260,7 @@ var pillbox = {};
         this.setState({placeholderIndex: this.state.selectedPills.length});
       }
     },
-    handleChange: function() {
+    triggerChange: function() {
       if ("createEvent" in document) {
         var evt = document.createEvent("HTMLEvents");
         evt.initEvent("change", false, true);
@@ -309,7 +321,7 @@ var pillbox = {};
             onMouseOver={this.highlightSuggestedPillAt}
             onItemClick={this.addSelectedPill}
           />
-          <input type='hidden' name={this.props.name} value={json}/>
+          <input ref='json' type='hidden' name={this.props.name} value={json}/>
         </div>
       );
     }
