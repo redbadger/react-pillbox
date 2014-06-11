@@ -307,6 +307,9 @@ var pillbox = {};
       else {
         this.getDOMNode().fireEvent("onchange");
       }
+      if(this.props.onUpdate) {
+        this.props.onUpdate(this.getAllSelectedPills());
+      }
     },
     render: function() {
       var selectedPills = this.state.selectedPills.map(function(pill, index) {

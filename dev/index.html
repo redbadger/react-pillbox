@@ -87,8 +87,11 @@
                 value: 'lorem-ipsum'
             }
         ];
+        function test(newData) {
+            console.log(newData);
+        }
         var comp1 = React.renderComponent(
-            <PillBox name='loremipsum1' pills={pills} autoFocus={true} numSuggestions={5}/>,
+            <PillBox name='loremipsum1' pills={pills} autoFocus={true} numSuggestions={5} onUpdate={test}/>,
             document.getElementById('example1')
         );
         var comp2 = React.renderComponent(
