@@ -233,6 +233,7 @@ var pillbox = {};
       selectedPills.splice(newIndex, 0, pill);
 
       this.setState({
+        draggedIndex: -1,
         placeholderIndex: -1,
         highlightSelected: newIndex,
         selectedPills: selectedPills
