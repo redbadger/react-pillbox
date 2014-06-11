@@ -21,7 +21,6 @@ describe('Pill Box Component', function() {
       });
 
       it('should have correct default props', function() {
-        expect(pillbox.props.name).toBe('pillbox');
         expect(pillbox.props.pills).toEqual([]);
         expect(pillbox.props.autoFocus).toBeTruthy();
         expect(pillbox.props.numSuggestions).toBe(5);

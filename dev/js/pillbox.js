@@ -13,7 +13,6 @@ var pillbox = {};
   pillbox.PillBox = React.createClass({displayName: 'PillBox',
     getDefaultProps: function() {
       return {
-        name: 'pillbox',
         pills: [],
         autoFocus: true,
         numSuggestions: 5
@@ -35,7 +34,11 @@ var pillbox = {};
     },
     componentDidMount: function() {
       document.addEventListener('click', this.handleClickOutside);
-      if(this.refs.json.getDOMNode().value != []) {
+      if(this.refs.json) {
+        if(this.refs.json.getDOMNode().value != '[]') {
+          this.triggerChange();
+        }
+      } else if(this.state.selectedPills.length > 0) {
         this.triggerChange();
       }
     },
@@ -43,7 +46,7 @@ var pillbox = {};
       document.removeEventListener('click', this.handleClickOutside);
     },
     componentWillUpdate: function() {
-      if(this.refs.json.getDOMNode().value != this.getJSON()) {
+      if(this.refs.json && this.refs.json.getDOMNode().value != this.getJSON()) {
         changed = true
       }
     },
@@ -74,6 +77,9 @@ var pillbox = {};
         if(filteredSelected.length == 0) {
           selectedPills.push(item)
           this.setState({selectedPills: selectedPills})
+          if(!this.refs.json) {
+            this.triggerChange();
+          }
         }
       }
     },
@@ -95,10 +101,16 @@ var pillbox = {};
         var selectedPills = this.state.selectedPills;
         selectedPills.push(item);
         this.setState({selectedPills: selectedPills});
+        if(!this.refs.json) {
+          this.triggerChange();
+        }
       }
     },
     clearSelected: function() {
       this.setState({selectedPills: []});
+      if(!this.refs.json) {
+        this.triggerChange();
+      }
     },
     clearLookup: function() {
       this.refs.lookup.getDOMNode().value = '';
@@ -117,6 +129,9 @@ var pillbox = {};
     removePill: function(pill) {
       this.state.selectedPills.splice(this.state.selectedPills.indexOf(pill), 1);
       this.setState({selectedPills: this.state.selectedPills});
+      if(!this.refs.json) {
+        this.triggerChange();
+      }
     },
     updatePrescription: function(input) {
       if(input.length > 0) {
@@ -238,6 +253,9 @@ var pillbox = {};
         highlightSelected: newIndex,
         selectedPills: selectedPills
       });
+      if(!this.refs.json) {
+        this.triggerChange();
+      }
     },
     handleDragOver: function(event) {
       event.preventDefault();
@@ -311,7 +329,10 @@ var pillbox = {};
         selectedPills.splice(this.state.placeholderIndex, 0, PlaceholderPill( {data:this.state.selectedPills[draggedIndex].label}));
       }
 
-      var json = this.getJSON();
+      if(this.props.name) {
+        var json = this.getJSON();
+        var input = React.DOM.input( {ref:"json", type:"hidden", name:this.props.name, value:json})
+      }
 
       return (
         React.DOM.div(
@@ -342,7 +363,7 @@ var pillbox = {};
             onMouseOver:this.highlightSuggestedPillAt,
             onItemClick:this.addSuggestedToSelected}
           ),
-          React.DOM.input( {ref:"json", type:"hidden", name:this.props.name, value:json})
+          input
         )
       );
     }
