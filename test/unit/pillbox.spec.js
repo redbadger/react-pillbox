@@ -64,5 +64,35 @@ describe('Pill Box Component', function() {
         expect(pillbox.getAllSelectedPills().length).toBe(0);
       });
     });
+
+    describe('selected pills', function() {
+      beforeEach(function() {
+        pillbox = ReactTestUtils.renderIntoDocument(PillBox( {pills:pillsNoPreselect}));
+      });
+
+      it('should be able to return a list of selected pill values', function() {
+        pillbox.addToSelected(0);
+        pillbox.addToSelected(1);
+        pillbox.addToSelected(2);
+
+        expect(pillbox.getAllSelectedValues()).toEqual(['lorem', 'lorrem', 'lorrrem']);
+      });
+
+      it('should be able to return a list of selected pill labels', function() {
+        pillbox.addToSelected(0);
+        pillbox.addToSelected(1);
+        pillbox.addToSelected(2);
+
+        expect(pillbox.getAllSelectedLabels()).toEqual(['Lorem', 'Lorrem', 'Lorrrem']);
+      });
+
+      it('should be able to return a list of selected pill label-value sets', function() {
+        pillbox.addToSelected(0);
+        pillbox.addToSelected(1);
+        pillbox.addToSelected(2);
+
+        expect(pillbox.getAllSelectedPills()).toEqual([{label: 'Lorem', value: 'lorem'}, {label: 'Lorrem', value: 'lorrem'}, {label: 'Lorrrem', value: 'lorrrem'}]);
+      })
+    });
   });
 });

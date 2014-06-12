@@ -62,6 +62,16 @@ var pillbox = {};
     getAllSelectedPills: function() {
       return this.state.selectedPills;
     },
+    getAllSelectedValues: function() {
+      return this.state.selectedPills.map(function(pill) {
+        return pill.value;
+      });
+    },
+    getAllSelectedLabels: function() {
+      return this.state.selectedPills.map(function(pill) {
+        return pill.label;
+      });
+    },
     getJSON: function() {
       return JSON.stringify(this.state.selectedPills);
     },
