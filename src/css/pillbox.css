@@ -8,11 +8,12 @@
 .pillbox {
     position: relative;
     background: #F7F7F7;
+    border: 1px solid #ddd;
+    padding: 0.5em 0.5em 0 0;
+    min-height: 2.7em;
 }
 
 .pillbox .pillbox-pills {
-    border: 1px solid #ddd;
-    padding: 0.5em 0.5em 0 0;
     cursor: text;
 }
 
