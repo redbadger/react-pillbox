@@ -394,7 +394,8 @@ var pillbox = {};
         element.dragDrop();
       });
     },
-    handleRemove: function() {
+    handleRemove: function(event) {
+      event.preventDefault();
       this.props.onRemove(this.props.data);
     },
     handleMouseOver: function() {
