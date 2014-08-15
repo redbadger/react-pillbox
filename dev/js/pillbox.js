@@ -526,3 +526,7 @@ var pillbox = {};
 })();
 
 var PillBox = pillbox.PillBox;
+
+if('undefined' !== typeof module && 'undefined' !== typeof module.exports) {
+  module.exports = PillBox;
+}
